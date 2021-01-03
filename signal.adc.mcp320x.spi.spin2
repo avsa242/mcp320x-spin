@@ -19,33 +19,29 @@ VAR
 
 OBJ
 
-    spi : "com.spi.4w"
+    spi : "com.spi.bitbang-fast"
     core: "core.con.mcp320x"
-    time: "time"
-    io  : "io"
 
-PUB Null{}
+PUB Null()
 ' This is not a top-level object
 
-PUB Start(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): okay
+PUB Start(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN, SCK_FREQ=1_000_000): okay
 
     if lookdown(CS_PIN: 0..31) and lookdown(SCK_PIN: 0..31) and{
-}   lookdown(MOSI_PIN: 0..31) and lookdown(MISO_PIN: 0..31)
-        if okay := spi.start(core#CLK_DELAY, core#CPOL)
-            time.msleep(1)
+}   lookdown(MOSI_PIN: 0..31) and lookdown(MISO_PIN: 0..31) and{
+}   SCK_FREQ <= core.SCK_MAX_FREQ_5V
+        if okay := spi.start(MOSI_PIN, MISO_PIN, SCK_PIN, SCK_FREQ)
+            waitms(1)
             longmove(@_CS, @CS_PIN, 4)
 
-            io.high(_CS)
-            io.output(_CS)
-            defaults{}
+            pinh(_CS)
+            defaults()
             return okay
     return FALSE                                ' something above failed
 
-PUB Stop{}
+PUB Stop()
 
-    spi.stop{}
-
-PUB Defaults{}
+PUB Defaults()
 ' Factory defaults
     adcchannel(0)
     refvoltage(3_300)
@@ -60,21 +56,21 @@ PUB ADCChannel(ch)
         other:
             return _ch
 
-PUB ADCData{}: adc_word | cfg
+PUB ADCData(): adc_word | cfg
 ' ADC data word
 '   Returns: 12-bit ADC word
     case _ch
         0, 1:
-            cfg := core#SINGLE_ENDED | core#MSBFIRST | (_ch << core#ODD_SIGN)
+            cfg := core.SINGLE_ENDED | core.MSBFIRST | (_ch << core.ODD_SIGN)
         other:
             return
 
-    io.low(_CS)
-    spi.shiftout(_MOSI, _SCK, core#MOSI_BITORDER, 4, cfg | core#START_MEAS)
-    adc_word := spi.shiftin(_MISO, _SCK, core#MISO_BITORDER, 13)
-    io.high(_CS)
+    pinl(_CS)
+    spi.write(_MOSI, _SCK, core.MOSI_BITORDER, 4, cfg | core.START_MEAS)
+    adc_word := spi.read(_MISO, _SCK, core.MISO_BITORDER, 13)
+    pinh(_CS)
 
-PUB RefVoltage(v): curr_v
+PUB RefVoltage(v=-2): curr_v
 ' Set ADC reference/supply voltage (Vdd), in millivolts
 '   Valid values: 2_700..5_500
 '   Any other value returns the current setting
@@ -84,9 +80,9 @@ PUB RefVoltage(v): curr_v
         other:
             return _adc_ref
 
-PUB Volts{}: v
+PUB Volts(): v
 ' Return ADC reading, in milli-volts
-    return (_adc_ref * adcdata{}) / 4096
+    return (_adc_ref * adcdata()) / 4096
 
 DAT
 {
