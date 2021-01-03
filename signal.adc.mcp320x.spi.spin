@@ -4,19 +4,17 @@
     Author: Jesse Burt
     Description: Driver for Microchip MCP320x
         Analog to Digital Converters
-    Copyright (c) 2020
+    Copyright (c) 2021
     Started Nov 26, 2019
-    Updated Jun 17, 2020
+    Updated Jan 3, 2021
     See end of file for terms of use.
     --------------------------------------------
 }
 
-CON
-
-
 VAR
 
     long _CS, _SCK, _MOSI, _MISO
+    word _adc_ref
     byte _ch
 
 OBJ
@@ -33,19 +31,24 @@ PUB Start(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): okay
 
     if lookdown(CS_PIN: 0..31) and lookdown(SCK_PIN: 0..31) and{
 }   lookdown(MOSI_PIN: 0..31) and lookdown(MISO_PIN: 0..31)
-        if okay := spi.start (core#CLK_DELAY, core#CPOL)
+        if okay := spi.start(core#CLK_DELAY, core#CPOL)
             time.msleep(1)
             longmove(@_CS, @CS_PIN, 4)
 
             io.high(_CS)
             io.output(_CS)
-
+            defaults{}
             return okay
     return FALSE                                ' something above failed
 
 PUB Stop{}
 
     spi.stop{}
+
+PUB Defaults{}
+' Factory defaults
+    adcchannel(0)
+    refvoltage(3_300)
 
 PUB ADCChannel(ch)
 ' Set ADC channel for subsequent reads
@@ -71,11 +74,19 @@ PUB ADCData{}: adc_word | cfg
     adc_word := spi.shiftin(_MISO, _SCK, core#MISO_BITORDER, 13)
     io.high(_CS)
 
+PUB RefVoltage(v): curr_v
+' Set ADC reference/supply voltage (Vdd), in millivolts
+'   Valid values: 2_700..5_500
+'   Any other value returns the current setting
+    case v
+        2_700..5_500:
+            _adc_ref := v
+        other:
+            return _adc_ref
+
 PUB Volts{}: v
 ' Return ADC reading, in milli-volts
-'   Valid values:
-'       ch: 0, 1
-    return (3_300 * adcdata{}) / 4096
+    return (_adc_ref * adcdata{}) / 4096
 
 DAT
 {

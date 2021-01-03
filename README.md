@@ -7,9 +7,10 @@ This is a P8X32A/Propeller driver object for the Microchip MCP320x-series ADCs
 
 ## Salient Features
 
-* SPI connection at up to 1MHz (P1)
+* SPI connection at 1MHz (P1)
 * Read channel 0 or 1
-* Methods to return raw ADC counts or Voltage scaled to 5V
+* Read raw ADC counts or voltage
+* Set reference voltage from 2.7v to 5.5v
 
 ## Requirements
 
@@ -22,8 +23,8 @@ P1/SPIN1:
 
 ## Compiler Compatibility
 
-* P1/SPIN1: OpenSpin (tested with 1.00.81)
-* ~~P2/SPIN2: FastSpin (tested with 4.1.10-beta)~~ _(not implemented yet)_
+* P1/SPIN1: OpenSpin (tested with 1.00.81), FlexSpin (tested with 5.0.0)
+* ~~P2/SPIN2: FlexSpin (tested with 5.0.0)~~ _(not implemented yet)_
 * ~~BST~~ (incompatible - no preprocessor)
 * ~~Propeller Tool~~ (incompatible - no preprocessor)
 * ~~PNut~~ (incompatible - no preprocessor)
@@ -31,10 +32,10 @@ P1/SPIN1:
 ## Limitations
 
 * Very early in development - may malfunction, or outright fail to build
-* Scaled voltage values currently hardcoded for 5V reference
 * Tested only with 2-channel model (MCP3202)
 
 ## TODO
 
-- [ ] Scale voltage to 3.3V reference
+- [x] User-settable reference voltage
 - [ ] Support 4, 8 channel models
+- [ ] Support 10-bit models
