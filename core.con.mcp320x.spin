@@ -3,9 +3,9 @@
     Filename: core.con.mcp320x.spin
     Author: Jesse Burt
     Description: Low-level constants
-    Copyright (c) 2019
+    Copyright (c) 2021
     Started Nov 26, 2019
-    Updated Jun 17, 2020
+    Updated Jan 3, 2021
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -22,25 +22,25 @@ CON
 
 ' Register definitions
     CONFIG                      = $00
-        FLD_START               = 3
-        FLD_SGL_DIFF            = 2
-        FLD_ODD_SIGN            = 1
-        FLD_MSBF                = 0
+        START                   = 3
+        SGL_DIFF                = 2
+        ODD_SIGN                = 1
+        MSBF                    = 0
 
-        START                   = 1 << FLD_START
+        START_MEAS              = 1 << START
 
-        SINGLE_ENDED            = 1 << FLD_SGL_DIFF
-        PSEUDO_DIFF             = 0 << FLD_SGL_DIFF
+        SINGLE_ENDED            = 1 << SGL_DIFF
+        PSEUDO_DIFF             = 0 << SGL_DIFF
 
-        CH1                     = 1 << FLD_ODD_SIGN
-        CH0                     = 0 << FLD_ODD_SIGN
+        CH1                     = 1 << ODD_SIGN
+        CH0                     = 0 << ODD_SIGN
 
-        IN0POS_IN1NEG           = 1 << FLD_ODD_SIGN
-        IN0NEG_IN1POS           = 0 << FLD_ODD_SIGN
+        IN0POS_IN1NEG           = 1 << ODD_SIGN
+        IN0NEG_IN1POS           = 0 << ODD_SIGN
 
-        MSBFIRST                = 1 << FLD_MSBF
-        LSBFIRST                = 0 << FLD_MSBF
+        MSBFIRST                = 1 << MSBF
+        LSBFIRST                = 0 << MSBF
 
 
-PUB Null
+PUB Null{}
 ' This is not a top-level object

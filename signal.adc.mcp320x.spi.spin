@@ -16,7 +16,7 @@ CON
 
 VAR
 
-    byte _CS, _MOSI, _MISO, _SCK
+    long _CS, _SCK, _MOSI, _MISO
     byte _ch
 
 OBJ
@@ -26,57 +26,56 @@ OBJ
     time: "time"
     io  : "io"
 
-PUB Null
-''This is not a top-level object
+PUB Null{}
+' This is not a top-level object
 
-PUB Start(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN, SCK_DELAY): okay
+PUB Start(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): okay
 
-    if lookdown(CS_PIN: 0..31) and lookdown(SCK_PIN: 0..31) and lookdown(MOSI_PIN: 0..31) and lookdown(MISO_PIN: 0..31)
-        if SCK_DELAY => 1
-            if okay := spi.start (SCK_DELAY, core#CPOL)         'SPI Object Started?
-                time.MSleep (1)
-                _CS := CS_PIN
-                _MOSI := MOSI_PIN
-                _MISO := MISO_PIN
-                _SCK := SCK_PIN
+    if lookdown(CS_PIN: 0..31) and lookdown(SCK_PIN: 0..31) and{
+}   lookdown(MOSI_PIN: 0..31) and lookdown(MISO_PIN: 0..31)
+        if okay := spi.start (core#CLK_DELAY, core#CPOL)
+            time.msleep(1)
+            longmove(@_CS, @CS_PIN, 4)
 
-                io.High(_CS)
-                io.Output(_CS)
+            io.high(_CS)
+            io.output(_CS)
 
-                return okay
-    return FALSE                                                'If we got here, something went wrong
+            return okay
+    return FALSE                                ' something above failed
 
-PUB Stop
+PUB Stop{}
 
-    spi.stop
+    spi.stop{}
 
-PUB ReadADC(ch)
-' Read raw ADC value from channel ch
+PUB ADCChannel(ch)
+' Set ADC channel for subsequent reads
 '   Valid values: 0, 1
 '   Any other value is ignored
     case ch
-        0: ch := core#SINGLE_ENDED | core#CH0 | core#MSBFIRST
-        1: ch := core#SINGLE_ENDED | core#CH1 | core#MSBFIRST
-        OTHER:
-            return FALSE
+        0..1:
+            _ch := ch
+        other:
+            return
 
-    readReg(ch, 2, @result)
+PUB ADCData{}: adc_word | cfg
+' ADC data word
+'   Returns: 12-bit ADC word
+    case _ch
+        0, 1:
+            cfg := core#SINGLE_ENDED | core#MSBFIRST | (_ch << core#ODD_SIGN)
+        other:
+            return
 
-PUB Voltage(ch) | tmp
+    io.low(_CS)
+    spi.shiftout(_MOSI, _SCK, core#MOSI_BITORDER, 4, cfg | core#START_MEAS)
+    adc_word := spi.shiftin(_MISO, _SCK, core#MISO_BITORDER, 13)
+    io.high(_CS)
+
+PUB Volts{}: v
 ' Return ADC reading, in milli-volts
 '   Valid values:
 '       ch: 0, 1
-    tmp := (ReadADC(ch) * 1_000) / 4096
-    result := tmp * 5
-
-PRI readReg(reg, nr_bytes, buff_addr) | cmd_packet, tmp
-
-    io.Low(_CS)
-
-    spi.SHIFTOUT (_MOSI, _SCK, core#MOSI_BITORDER, 4, reg | core#START)
-    word[buff_addr][0] := spi.SHIFTIN (_MISO, _SCK, core#MISO_BITORDER, 13)
-
-    io.High(_CS)
+    return (3_300 * adcdata{}) / 4096
 
 DAT
 {
