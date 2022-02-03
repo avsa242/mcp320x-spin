@@ -3,9 +3,9 @@
     Filename: MCP320X-Demo.spin
     Author: Jesse Burt
     Description: Demo of the MCP320x driver
-    Copyright (c) 2021
+    Copyright (c) 2022
     Started Nov 26, 2019
-    Updated Jan 3, 2021
+    Updated Feb 3, 2022
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -30,7 +30,7 @@ OBJ
     cfg     : "core.con.boardcfg.flip"
     ser     : "com.serial.terminal.ansi"
     time    : "time"
-    adc     : "signal.adc.mcp320x.spi"
+    adc     : "signal.adc.mcp320x"
     int     : "string.integer"
 
 PUB Main{}
@@ -78,8 +78,6 @@ PUB Setup{}
         ser.strln(string("MCP320x driver started"))
     else
         ser.strln(string("MCP320x driver failed to start - halting"))
-        time.msleep(500)
-        ser.stop{}
         repeat
 
 DAT
