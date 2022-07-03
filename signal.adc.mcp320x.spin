@@ -73,8 +73,8 @@ PUB ADCData{}: adc_word | cfg
             return
 
     outa[_CS] := 0
-    spi.wr_byte(core#START_MEAS | cfg)
-    adc_word := spi.rdword_msbf{}
+    spi.wrbits_msbf((core.START_MEAS | cfg), 4)
+    adc_word := (spi.rdbits_msbf(13) & $fff)    ' 1 null bit + 12 data bits
     outa[_CS] := 1
 
 PUB RefVoltage(v): curr_v

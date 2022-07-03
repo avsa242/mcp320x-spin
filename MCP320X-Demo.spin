@@ -28,7 +28,7 @@ CON
 OBJ
 
     cfg     : "core.con.boardcfg.flip"
-    ser     : "com.serial.terminal.ansi"
+    ser     : "com.serial.terminal.ansi-new"
     time    : "time"
     adc     : "signal.adc.mcp320x"
     int     : "string.integer"
@@ -75,7 +75,7 @@ PUB Setup{}
     time.msleep(30)
     ser.clear{}
     ser.strln(string("Serial terminal started"))
-    if adc.start(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN)
+    if adc.startx(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN)
         ser.strln(string("MCP320x driver started"))
     else
         ser.strln(string("MCP320x driver failed to start - halting"))
