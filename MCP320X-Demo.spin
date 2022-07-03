@@ -5,7 +5,7 @@
     Description: Demo of the MCP320x driver
     Copyright (c) 2022
     Started Nov 26, 2019
-    Updated Feb 3, 2022
+    Updated Jul 3, 2022
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -36,6 +36,7 @@ OBJ
 PUB Main{}
 
     setup
+    adc.defaults{}
     adc.adcchannel(0)                           ' 0..1 (MCP3202)
 
     repeat
