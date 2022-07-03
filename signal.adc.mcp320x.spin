@@ -1,6 +1,6 @@
 {
     --------------------------------------------
-    Filename: signal.adc.mcp320x.spi.spin
+    Filename: signal.adc.mcp320x.spin
     Author: Jesse Burt
     Description: Driver for Microchip MCP320x
         Analog to Digital Converters

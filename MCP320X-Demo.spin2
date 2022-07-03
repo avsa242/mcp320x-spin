@@ -75,7 +75,7 @@ PUB Setup()
     ser.start(SER_BAUD)
     ser.clear()
     ser.strln(string("Serial terminal started"))
-    if adc.start(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN, SCK_FREQ)
+    if adc.startx(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN, SCK_FREQ)
         ser.strln(string("MCP320x driver started"))
     else
         ser.strln(string("MCP320x driver failed to start - halting"))
