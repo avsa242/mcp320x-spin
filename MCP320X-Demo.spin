@@ -28,12 +28,11 @@ CON
 OBJ
 
     cfg     : "core.con.boardcfg.flip"
-    ser     : "com.serial.terminal.ansi-new"
+    ser     : "com.serial.terminal.ansi"
     time    : "time"
     adc     : "signal.adc.mcp320x"
-    int     : "string.integer"
 
-PUB Main{}
+PUB Main{} | mv
 
     setup
     adc.defaults{}
@@ -41,33 +40,8 @@ PUB Main{}
 
     repeat
         ser.position(0, 3)
-        ser.str(string("ADC: "))
-        decimaldot(adc.volts{}, 1000)
-
-PRI DecimalDot(scaled, divisor) | whole[4], part[4], places, tmp, sign
-' Display a scaled up number as a decimal
-'   Scale it back down by divisor (e.g., 10, 100, 1000, etc)
-    whole := scaled / divisor
-    tmp := divisor
-    places := 0
-    part := 0
-    sign := 0
-    if scaled < 0
-        sign := "-"
-    else
-        sign := " "
-
-    repeat
-        tmp /= 10
-        places++
-    until tmp == 1
-    scaled //= divisor
-    part := int.deczeroed(||(scaled), places)
-
-    ser.char(sign)
-    ser.dec(||(whole))
-    ser.char(".")
-    ser.str(part)
+        mv := adc.volts{}
+        ser.printf2(@"ADC: %0d.%03.3dv", (mv / 1000), (mv // 1000))
 
 PUB Setup{}
 
