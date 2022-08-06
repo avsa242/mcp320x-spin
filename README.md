@@ -15,21 +15,22 @@ This is a P8X32A/Propeller driver object for the Microchip MCP320x-series ADCs
 ## Requirements
 
 P1/SPIN1:
-* spin-standard-library
-* 1 extra core/cog for the PASM SPI engine
+* 1 extra core/cog for the PASM SPI engine (none if bytecode engine is used)
+* signal.adc.common.spinh (provided by spin-standard-library)
 
 P2/SPIN2:
 * p2-spin-standard-library
+* signal.adc.common.spin2h (provided by p2-spin-standard-library)
 
 ## Compiler Compatibility
 
 | Processor | Language | Compiler               | Backend     | Status                |
 |-----------|----------|------------------------|-------------|-----------------------|
-| P1        | SPIN1    | FlexSpin (5.9.13-beta) | Bytecode    | OK                    |
-| P1        | SPIN1    | FlexSpin (5.9.13-beta) | Native code | OK                    |
+| P1        | SPIN1    | FlexSpin (5.9.14-beta) | Bytecode    | OK                    |
+| P1        | SPIN1    | FlexSpin (5.9.14-beta) | Native code | OK                    |
 | P1        | SPIN1    | OpenSpin (1.00.81)     | Bytecode    | Untested (deprecated) |
-| P2        | SPIN2    | FlexSpin (5.9.13-beta) | NuCode      | Untested              |
-| P2        | SPIN2    | FlexSpin (5.9.13-beta) | Native code | Not yet implemented   |
+| P2        | SPIN2    | FlexSpin (5.9.14-beta) | NuCode      | Untested              |
+| P2        | SPIN2    | FlexSpin (5.9.14-beta) | Native code | Not yet implemented   |
 | P1        | SPIN1    | Brad's Spin Tool (any) | Bytecode    | Unsupported           |
 | P1, P2    | SPIN1, 2 | Propeller Tool (any)   | Bytecode    | Unsupported           |
 | P1, P2    | SPIN1, 2 | PNut (any)             | Bytecode    | Unsupported           |
