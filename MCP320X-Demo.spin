@@ -5,7 +5,7 @@
     Description: Demo of the MCP320X driver
         * Power data output
     Started Nov 26, 2019
-    Updated Aug 6, 2022
+    Updated Oct 16, 2022
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -28,7 +28,7 @@ CON
 
 OBJ
 
-    cfg : "core.con.boardcfg.flip"
+    cfg : "boardcfg.flip"
     ser : "com.serial.terminal.ansi"
     adc : "signal.adc.mcp320x"
     time: "time"
@@ -46,7 +46,7 @@ PUB main{}
         repeat
 
     adc.defaults{}
-    demo{}
+    show_adc_data{}
 
 #include "adcdemo.common.spinh"
 
