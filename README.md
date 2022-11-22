@@ -27,7 +27,7 @@ P2/SPIN2:
 | Processor | Language | Compiler               | Backend     | Status                |
 |-----------|----------|------------------------|-------------|-----------------------|
 | P1        | SPIN1    | FlexSpin (5.9.14-beta) | Bytecode    | OK                    |
-| P1        | SPIN1    | FlexSpin (5.9.14-beta) | Native code | OK                    |
+| P1        | SPIN1    | FlexSpin (5.9.14-beta) | Native code | Runs, but buggy       |
 | P1        | SPIN1    | OpenSpin (1.00.81)     | Bytecode    | Untested (deprecated) |
 | P2        | SPIN2    | FlexSpin (5.9.14-beta) | NuCode      | Runs, but buggy       |
 | P2        | SPIN2    | FlexSpin (5.9.14-beta) | Native code | Not yet implemented   |

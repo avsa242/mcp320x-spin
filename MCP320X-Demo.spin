@@ -5,7 +5,7 @@
     Description: Demo of the MCP320X driver
         * Power data output
     Started Nov 26, 2019
-    Updated Oct 16, 2022
+    Updated Nov 22, 2022
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -46,7 +46,7 @@ PUB main{}
         repeat
 
     adc.defaults{}
-    adc.adc_chan_ena(0)                         ' select channel (# available is model-dependent)
+    adc.set_adc_channel(0)                      ' select channel (# available is model-dependent)
     show_adc_data{}
 
 #include "adcdemo.common.spinh"
