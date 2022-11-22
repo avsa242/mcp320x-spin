@@ -5,7 +5,7 @@
     Description: Driver for Microchip MCP320x Analog to Digital Converters (P2 version)
     Copyright (c) 2022
     Started Nov 26, 2019
-    Updated Sep 24, 2022
+    Updated Nov 22, 2022
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -21,7 +21,6 @@ OBJ
 
     spi : "com.spi.10mhz"
     core: "core.con.mcp320x"
-    u64 : "math.unsigned64"
 
 PUB null()
 ' This is not a top-level object
@@ -78,7 +77,7 @@ PUB adc_data(): adc_word | cfg
 
 PUB adc2volts(adc_word): volts
 ' Scale ADC word to microvolts
-    return u64.multdiv(_adc_ref, adc_word, 4096)
+    return muldiv64(_adc_ref, adc_word, 4096)
 
 PUB ref_voltage(v=-2): curr_v
 ' Set ADC reference/supply voltage (Vdd), in microvolts

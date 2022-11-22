@@ -20,10 +20,10 @@ CON
     SER_BAUD    = 115_200
 
     { SPI configuration }
-    CS_PIN      = 8                             ' CSn/SHDN
-    SCK_PIN     = 9                             ' CLK
-    MOSI_PIN    = 10                            ' DIN
-    MISO_PIN    = 11                            ' DOUT
+    CS_PIN      = 0                             ' CSn/SHDN
+    SCK_PIN     = 1                             ' CLK
+    MOSI_PIN    = 2                             ' DIN
+    MISO_PIN    = 3                             ' DOUT
 ' --
 
 OBJ
@@ -46,6 +46,7 @@ PUB main{}
         repeat
 
     adc.defaults{}
+    adc.adc_chan_ena(0)                         ' select channel (# available is model-dependent)
     show_adc_data{}
 
 #include "adcdemo.common.spinh"

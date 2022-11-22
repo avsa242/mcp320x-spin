@@ -45,6 +45,7 @@ PUB main()
         repeat
 
     adc.defaults()
+    adc.adc_chan_ena(0)                         ' select channel (# available is model-dependent)
     show_adc_data()
 
 #include "adcdemo.common.spin2h"
