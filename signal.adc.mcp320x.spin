@@ -5,7 +5,7 @@
     Description: Driver for Microchip MCP320x and 300x Analog to Digital Converters
     Copyright (c) 2023
     Started Nov 26, 2019
-    Updated Jun 24, 2023
+    Updated Jun 30, 2023
     See end of file for terms of use.
     --------------------------------------------
 }
@@ -37,6 +37,8 @@ PUB startx(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): status
             _CS := CS_PIN
             outa[_CS] := 1
             dira[_CS] := 1
+
+            defaults{}
             return status
     ' if this point is reached, something above failed
     ' Double check I/O pin assignments, connections, power
