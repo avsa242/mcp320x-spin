@@ -31,10 +31,10 @@ OBJ
     time: "time"
     u64 : "math.unsigned64"
 
-PUB null{}
+PUB null()
 ' This is not a top-level object
 
-PUB start{}: status
+PUB start(): status
 ' Start the driver using default I/O settings
     return startx(CS, SCK, MOSI, MISO)
 
@@ -48,31 +48,31 @@ PUB startx(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): status
             outa[_CS] := 1
             dira[_CS] := 1
 
-            defaults{}
+            defaults()
             return status
     ' if this point is reached, something above failed
     ' Double check I/O pin assignments, connections, power
     ' Lastly - make sure you have at least one free core/cog
     return FALSE
 
-PUB stop{}
+PUB stop()
 ' Stop the driver
-    spi.deinit{}
+    spi.deinit()
     _CS := 0
     _adc_ref := 0
     _ch := 0
 
-PUB defaults{}
+PUB defaults()
 ' Factory defaults
     set_model(3001)
     set_adc_channel(0)
     set_ref_voltage(3_300000)
 
-PUB adc_channel{}: ch
+PUB adc_channel(): ch
 ' Get currently set ADC channel (cached)
     return _ch
 
-PUB adc_data{}: adc_word | cfg
+PUB adc_data(): adc_word | cfg
 ' ADC data word
 '   Returns: 12-bit ADC word
     case _ch
@@ -93,7 +93,7 @@ PUB adc2volts(adc_word): volts
 PUB opmode(m)
 ' dummy method for API compatibility with other drivers
 
-PUB ref_voltage{}: v
+PUB ref_voltage(): v
 ' Get currently set reference voltage
 '   Returns: microvolts
     return _adc_ref
