@@ -45,5 +45,7 @@ P2/SPIN2:
 
 ## Limitations
 
-* TBD
+* Single-channel models untested
+* Differential modes not yet supported
+* Models with other than 10 or 12 bit resolution not yet supported
 

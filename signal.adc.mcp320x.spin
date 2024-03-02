@@ -4,7 +4,7 @@
     Description:    Driver for Microchip MCP320x and 300x Analog to Digital Converters
     Author:         Jesse Burt
     Started:        Nov 26, 2019
-    Updated:        Mar 1, 2024
+    Updated:        Mar 2, 2024
     Copyright (c) 2024 - See end of file for terms of use.
 ---------------------------------------------------------------------------------------------------
 }
@@ -16,6 +16,7 @@ CON
     SCK         = 1
     MOSI        = 2
     MISO        = 3
+    MODEL       = 3002
 
 #include "signal.adc.common.spinh"              ' pull in code common to all ADC drivers
 
@@ -24,6 +25,8 @@ VAR
     long _CS
     long _adc_ref
     long _adc_rdbits, _adc_range, _adc_max
+    long _adc_model
+    word _adc_mask
     byte _max_channels, _ch
 
 OBJ
@@ -38,12 +41,18 @@ PUB null()
 
 PUB start(): status
 ' Start the driver using default I/O settings
-    return startx(CS, SCK, MOSI, MISO)
+    status := startx(CS, SCK, MOSI, MISO)
+    set_model(MODEL)
+
 
 PUB startx(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): status
 ' Start the driver, using custom I/O settings
-    if ( lookdown(CS_PIN: 0..31) and lookdown(SCK_PIN: 0..31) and ...
-        lookdown(MOSI_PIN: 0..31) and lookdown(MISO_PIN: 0..31) )
+'   CS_PIN:     Chip Select
+'   SCK_PIN:    Serial Clock
+'   MOSI_PIN:   Master-Out Slave-In (ignored on single-channel ADC models)
+'   MISO_PIN:   Master-In Slave-Out
+'   Returns: cog ID+1 of SPI engine on success, or 0 on failure
+    if ( lookdown(CS_PIN: 0..31) and lookdown(SCK_PIN: 0..31) and lookdown(MISO_PIN: 0..31) )
         if ( status := spi.init(SCK_PIN, MOSI_PIN, MISO_PIN, core.SPI_MODE) )
             time.msleep(1)
             _CS := CS_PIN
@@ -77,7 +86,6 @@ PUB adc_channel(): ch
 PUB adc_data(): adc_word | cfg, len
 ' ADC data word
 '   Returns: ADC word (10 or 12 bits, depending on model - see set_model() )
-    _ch := 0 #> _ch <# _max_channels-1
     case _max_channels
         2:
             cfg :=  core.START_MEAS_2CH | core.SINGLE_ENDED_2CH | (_ch << core.ODD_SIGN) | ...
@@ -88,8 +96,9 @@ PUB adc_data(): adc_word | cfg, len
             len := 5
 
     outa[_CS] := 0
-        spi.wrbits_msbf(cfg, len)               ' configure/initiate a conversion
-        adc_word := (spi.rdbits_msbf(_adc_rdbits) & $fff)
+        if ( _max_channels > 1 )                ' only multi-channel models are configurable
+            spi.wrbits_msbf(cfg, len)           ' configure and initiate a conversion
+        adc_word := (spi.rdbits_msbf(_adc_rdbits) & _adc_mask)
     outa[_CS] := 1
 
 PUB adc2volts(adc_word): volts
@@ -114,29 +123,35 @@ PUB set_adc_res(bits)
 '   Valid values: 10, 12 (other values ignored)
     if ( lookdown(bits: 10, 12) )
         _adc_rdbits := bits
-        _adc_range := (1 << bits)
-        _adc_max := _adc_range-1
+        _adc_range := (1 << bits)               ' ADC max number of codes
+        _adc_max := _adc_range-1                ' ADC max word
+        _adc_mask := _adc_range-1               ' ADC word mask
 
-pub set_model(m) | tmp
+pub set_model(m): e | tmp
 ' Set ADC model
 '   Valid values:
 '       10-bit models: 3001, 3002, 3004, 3008
 '       12-bit models: 3201, 3202, 3204, 3208
+'   Returns: 0 on success, -1 on invalid model
+    e := 0
     case m
         3001, 3002, 3004, 3008:
             set_adc_res(10)
             _max_channels := m-3000
-            if ( _max_channels == 2 )
-                _adc_rdbits += 1
-            elseif ( _max_channels => 4 )
-                _adc_rdbits += 2
         3201, 3202, 3204, 3208:
             set_adc_res(12)
             _max_channels := m-3200
-            if ( _max_channels == 2 )
-                _adc_rdbits += 1
-            elseif ( _max_channels => 4 )
-                _adc_rdbits += 2
+        other:
+            return -1                           ' error: invalid
+
+    if ( _max_channels == 1 )
+        _adc_rdbits += 3                        ' data bits + null bit + 2 extra sample clocks
+    elseif ( _max_channels == 2 )
+        _adc_rdbits += 1                        ' data bits + null bit
+    elseif ( _max_channels => 4 )
+        _adc_rdbits += 2                        ' data bits + null bit + 1 extra sample clock
+
+    _adc_model := m
 
 PUB set_ref_voltage(v): curr_v
 ' Set ADC reference/supply voltage (Vdd), in microvolts
