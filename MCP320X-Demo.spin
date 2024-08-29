@@ -4,20 +4,19 @@
     Description:    Demo of the MCP320X driver (voltage data output)
     Author:         Jesse Burt
     Started:        Nov 26, 2019
-    Updated:        Mar 2, 2024
+    Updated:        Aug 29, 2024
     Copyright (c) 2024 - See end of file for terms of use.
 ----------------------------------------------------------------------------------------------------
 }
 
 CON
 
-    _clkmode    = cfg#_clkmode
-    _xinfreq    = cfg#_xinfreq
+    _clkmode    = xtal1+pll16x
+    _xinfreq    = 5_000_000
 
 
 OBJ
 
-    cfg:    "boardcfg.flip"
     time:   "time"
     ser:    "com.serial.terminal.ansi" | SER_BAUD=115_200
     adc:    "signal.adc.mcp320x" | MODEL=3002, CS=0, SCK=1, MOSI=2, MISO=3

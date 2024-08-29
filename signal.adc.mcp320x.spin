@@ -1,12 +1,12 @@
 {
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
     Filename:       signal.adc.mcp320x.spin
     Description:    Driver for Microchip MCP320x and 300x Analog to Digital Converters
     Author:         Jesse Burt
     Started:        Nov 26, 2019
-    Updated:        Mar 2, 2024
+    Updated:        Aug 28, 2024
     Copyright (c) 2024 - See end of file for terms of use.
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 }
 
 CON
@@ -16,9 +16,11 @@ CON
     SCK         = 1
     MOSI        = 2
     MISO        = 3
+    SPI_FREQ    = 1_000_000
     MODEL       = 3002
 
 #include "signal.adc.common.spinh"              ' pull in code common to all ADC drivers
+
 
 VAR
 
@@ -29,15 +31,18 @@ VAR
     word _adc_mask
     byte _max_channels, _ch
 
+
 OBJ
 
-    spi:    "com.spi.1mhz"
-    core:   "core.con.mcp320x"
-    time:   "time"
-    u64:    "math.unsigned64"
+    spi:    "com.spi.1mhz"                      ' SPI engine
+    core:   "core.con.mcp320x"                  ' HW-specific constants
+    time:   "time"                              ' timekeeping methods
+    u64:    "math.unsigned64"                   ' unsigned 64-bit math routines
+
 
 PUB null()
 ' This is not a top-level object
+
 
 PUB start(): status
 ' Start the driver using default I/O settings
@@ -51,7 +56,9 @@ PUB startx(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): status
 '   SCK_PIN:    Serial Clock
 '   MOSI_PIN:   Master-Out Slave-In (ignored on single-channel ADC models)
 '   MISO_PIN:   Master-In Slave-Out
-'   Returns: cog ID+1 of SPI engine on success, or 0 on failure
+'   Returns:
+'       cog ID+1 of SPI engine on success
+'       0 on failure
     if ( lookdown(CS_PIN: 0..31) and lookdown(SCK_PIN: 0..31) and lookdown(MISO_PIN: 0..31) )
         if ( status := spi.init(SCK_PIN, MOSI_PIN, MISO_PIN, core.SPI_MODE) )
             time.msleep(1)
@@ -66,6 +73,7 @@ PUB startx(CS_PIN, SCK_PIN, MOSI_PIN, MISO_PIN): status
     ' Lastly - make sure you have at least one free core/cog
     return FALSE
 
+
 PUB stop()
 ' Stop the driver
     spi.deinit()
@@ -73,15 +81,18 @@ PUB stop()
     _adc_ref := 0
     _ch := 0
 
+
 PUB defaults()
 ' Factory defaults
     set_model(3001)
     set_adc_channel(0)
     set_ref_voltage(3_300000)
 
+
 PUB adc_channel(): ch
 ' Get currently set ADC channel (cached)
     return _ch
+
 
 PUB adc_data(): adc_word | cfg, len
 ' ADC data word
@@ -101,22 +112,27 @@ PUB adc_data(): adc_word | cfg, len
         adc_word := (spi.rdbits_msbf(_adc_rdbits) & _adc_mask)
     outa[_CS] := 1
 
+
 PUB adc2volts(adc_word): volts
 ' Scale ADC word to microvolts
     return u64.multdiv(_adc_ref, adc_word, _adc_range)
 
+
 PUB opmode(m)
 ' dummy method for API compatibility with other drivers
+
 
 PUB ref_voltage(): v
 ' Get currently set reference voltage
 '   Returns: microvolts
     return _adc_ref
 
+
 PUB set_adc_channel(ch)
 ' Set ADC channel for subsequent reads
 '   Valid values: 0..7 (model-dependent)
     _ch := 0 #> ch <# (_max_channels-1)
+
 
 PUB set_adc_res(bits)
 ' Set ADC resolution
@@ -126,6 +142,7 @@ PUB set_adc_res(bits)
         _adc_range := (1 << bits)               ' ADC max number of codes
         _adc_max := _adc_range-1                ' ADC max word
         _adc_mask := _adc_range-1               ' ADC word mask
+
 
 pub set_model(m): e | tmp
 ' Set ADC model
@@ -152,6 +169,7 @@ pub set_model(m): e | tmp
         _adc_rdbits += 2                        ' data bits + null bit + 1 extra sample clock
 
     _adc_model := m
+
 
 PUB set_ref_voltage(v): curr_v
 ' Set ADC reference/supply voltage (Vdd), in microvolts

@@ -4,20 +4,19 @@
     Description:    Demo of the MCP320X driver (voltage data output)
     Author:         Jesse Burt
     Started:        Nov 26, 2019
-    Updated:        Mar 2, 2024
+    Updated:        Aug 29, 2024
     Copyright (c) 2024 - See end of file for terms of use.
 ----------------------------------------------------------------------------------------------------
 }
 
 CON
 
-    _clkfreq    = cfg._clkfreq_def
-    _xtlfreq    = cfg._xtlfreq
+    _clkfreq    = 180_000_000
+    _xtlfreq    = 20_000_000
 
 
 OBJ
 
-    cfg:    "boardcfg.p2eval"
     ser:    "com.serial.terminal.ansi"
     adc:    "signal.adc.mcp320x" | MODEL=3002, CS=0, SCK=1, MOSI=2, MISO=3, SPI_FREQ=1_000_000
     ' MODEL can be:
