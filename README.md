@@ -18,7 +18,6 @@ This is a P8X32A/Propeller driver object for the Microchip MCP320x and MCP300x s
 ## Requirements
 
 P1/SPIN1:
-* 1 extra core/cog for the PASM SPI engine (none if bytecode engine is used)
 * signal.adc.common.spinh (provided by spin-standard-library)
 
 P2/SPIN2:
@@ -30,10 +29,10 @@ P2/SPIN2:
 
 | Processor | Language | Compiler               | Backend      | Status                |
 |-----------|----------|------------------------|--------------|-----------------------|
-| P1        | SPIN1    | FlexSpin (6.9.4)       | Bytecode     | OK                    |
-| P1        | SPIN1    | FlexSpin (6.9.4)       | Native/PASM  | Runs, but buggy       |
-| P2        | SPIN2    | FlexSpin (6.9.4)       | NuCode       | Runs, but buggy       |
-| P2        | SPIN2    | FlexSpin (6.9.4)       | Native/PASM2 | OK                    |
+| P1        | SPIN1    | FlexSpin (7.6.12-beta) | Bytecode     | OK                    |
+| P1        | SPIN1    | FlexSpin (7.6.12-beta) | Native/PASM  | OK                    |
+| P2        | SPIN2    | FlexSpin (7.6.12-beta) | NuCode       | OK                    |
+| P2        | SPIN2    | FlexSpin (7.6.12-beta) | Native/PASM2 | OK                    |
 
 (other versions or toolchains not listed are __not supported__, and _may or may not_ work)
 
