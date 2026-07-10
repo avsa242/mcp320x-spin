@@ -4,8 +4,8 @@
     Description:    Demo of the MCP320X driver (voltage data output)
     Author:         Jesse Burt
     Started:        Nov 26, 2019
-    Updated:        Aug 29, 2024
-    Copyright (c) 2024 - See end of file for terms of use.
+    Updated:        Jul 10, 2026
+    Copyright (c) 2026 - See end of file for terms of use.
 ----------------------------------------------------------------------------------------------------
 }
 
@@ -47,7 +47,7 @@ PUB main() | ch, v
             adc.set_adc_channel(ch)             ' select channel (# available is model-dependent)
             v := adc.voltage()
             ser.pos_xy(0, 3+ch)
-            ser.printf3(@"CH%d Voltage: %d.%06.6dv", ch, (v / VF), ||(v // VF))
+            ser.printf(@"CH%d Voltage: %d.%06.6dv", ch, (v / VF), abs(v // VF))
 
 
 CON VF  = 1_000_000                             ' voltage scaling factor
@@ -55,7 +55,7 @@ CON VF  = 1_000_000                             ' voltage scaling factor
 
 DAT
 {
-Copyright (c) 2024 Jesse Burt
+Copyright (c) 2026 Jesse Burt
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 associated documentation files (the "Software"), to deal in the Software without restriction,
